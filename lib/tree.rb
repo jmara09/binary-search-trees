@@ -33,6 +33,33 @@ class Tree
     root
   end
 
+  def search_successor(root)
+    curr = root.right
+    loop do
+      return curr if curr.left.nil?
+
+      curr = curr.left
+    end
+  end
+
+  def delete(key, root = @root)
+    return root if root.nil?
+
+    if root.data > key
+      root.left = delete(key, root.left)
+    elsif root.data < key
+      root.right = delete(key, root.right)
+    else
+      return root.right if root.left.nil?
+      return root.left if root.right.nil?
+
+      successor = search_successor(root)
+      root.data = successor.data
+      root.right = delete(successor.data, root.right)
+    end
+    root
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
