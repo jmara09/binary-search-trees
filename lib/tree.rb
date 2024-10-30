@@ -77,4 +77,37 @@ class Tree
       find(value, root.right)
     end
   end
+
+  def level_order_recur(queue = [@root], data = [], &block)
+    root = queue.shift
+    queue << root.left unless root.left.nil?
+    queue << root.right unless root.right.nil?
+
+    if block_given?
+      block.call(root.data)
+    else
+      data << root.data
+    end
+    return if queue.empty?
+
+    level_order_recur(queue, data, &block)
+    data
+  end
+
+  def level_order(&block)
+    queue = Array.new(1, @root)
+    data = []
+    until queue.empty?
+      root = queue.shift
+      queue << root.left unless root.left.nil?
+      queue << root.right unless root.right.nil?
+
+      if block_given?
+        block.call(root.data)
+      else
+        data << root.data
+      end
+    end
+    data
+  end
 end
