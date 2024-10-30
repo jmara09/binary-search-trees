@@ -110,4 +110,88 @@ class Tree
     end
     data
   end
+
+  def preorder(root = @root, data = [], &block)
+    return data if root.nil?
+
+    if block_given?
+      block.call(root.data)
+    else
+      data << root.data
+    end
+    preorder(root.left, data)
+    preorder(root.right, data)
+  end
+
+  def inorder(root = @root, data = [], &block)
+    return data if root.nil?
+
+    inorder(root.left, data)
+
+    if block_given?
+      block.call(root.data)
+    else
+      data << root.data
+    end
+
+    inorder(root.right, data)
+  end
+
+  def postorder(root = @root, data = [], &block)
+    return data if root.nil?
+
+    postorder(root.left, data)
+    postorder(root.right, data)
+
+    if block_given?
+      block.call(root.data)
+    else
+      data << root.data
+    end
+  end
+
+  def depth(node, root = @root)
+    return -1 if root.nil?
+
+    dist = -1
+
+    if node == root ||
+       (dist = depth(node, root.left)) >= 0 ||
+       (dist = depth(node, root.right)) >= 0
+      return dist + 1
+    end
+
+    dist
+  end
+
+  def height_util(node, root)
+    return -1 if root.nil?
+
+    left_height = height_util(node, root.left)
+    right_height = height_util(node, root.right)
+
+    ans = [left_height, right_height].max + 1
+
+    @height = ans if node == root
+
+    ans
+  end
+
+  def height(node = @root, root = @root)
+    @height = -1
+    height_util(node, root)
+    @height
+  end
+
+  def balance?
+    left_height = height(root.left)
+    right_height = height(root.right)
+    difference = left_height - right_height
+    difference.between?(-1, 1)
+  end
+
+  def rebalance
+    array = level_order_recur.sort
+    @root = build_tree(array, 0, array.length - 1)
+  end
 end
